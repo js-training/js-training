@@ -3,7 +3,8 @@ var GameField = {
         var tbody = dom("TBODY", {"class": "gameField"});
         this.squares = [];
         this.food = {};
-        //  this.bouldersToGo = level.boulders;
+        this.player = new Snake();
+        this.playerPos = this.player.head;
 
         for (var y = 0; y < snakeLocation.field.length; y++) {
             var line = snakeLocation.field[y];
@@ -14,10 +15,6 @@ var GameField = {
                 tableRow.appendChild(tableCell);
                 var square = Square.create(line.charAt(x), tableCell);
                 squareRow.push(square);
-                if (square.hasPlayer()) {
-                    console.log("hasPlayer. x = "+x+"  y="+y );
-                    this.playerPos = new Point(x, y);
-                }
                 if (square.hasFood()) {
                     this.foodPos = new Point(x, y);
                 }
@@ -28,7 +25,6 @@ var GameField = {
 
         this.table = dom("TABLE", {"class": "gameField"}, tbody);
         this.score = dom("DIV", null, "...");
-        //  place.appendChild(this.table);
     },
     getSquare: function(position) {
         return this.squares[position.y][position.x];
@@ -45,35 +41,45 @@ GameField.remove = function() {
 };
 
 GameField.move = function(direction) {
-    var playerSquare = this.getSquare(this.playerPos);
+    var playerSnake = this.player;
     var targetPos = this.playerPos.add(direction);
     var targetSquare = this.getSquare(targetPos);
 
     if (targetSquare.hasFood()) {
         var foodSquare = this.getSquare(this.foodPos);
         var randomDirection = randomTarget();
-        while (randomDirection.x + this.foodPos.x > 20 ||
-            randomDirection.y + this.foodPos.y > 20 ||
-            randomDirection.x + this.foodPos.x < 0 ||
-            randomDirection.y + this.foodPos.y < 0) {
+        while (randomDirection.x + this.foodPos.x > 19 ||
+            randomDirection.y + this.foodPos.y > 19 ||
+            randomDirection.x + this.foodPos.x < 1 ||
+            randomDirection.y + this.foodPos.y < 1) {
             randomDirection = randomTarget();
         }
 
         var targetRandomPos = this.foodPos.add(randomDirection);
 
         this.foodPos =  targetRandomPos;
-        console.log("new food pos. x = "+this.foodPos.x +"   y = "+this.foodPos.y);
         var targetRandomSquare = this.getSquare(this.foodPos);
-        //   targetSquare.clearContent();
         foodSquare.moveContent(targetRandomSquare);
-        //    var oldPlayerSquare=  playerSquare;
-        playerSquare.moveContent(targetSquare);
-        // playerSquare.cloneContent(targetSquare);
-        increasePlayer();
-        this.playerPos = targetPos;
 
+        var headSquare = this.getSquare(playerSnake.snakeBody["0"].position);
+        headSquare.copyContent(targetSquare);
+        playerSnake.increase(direction);
+
+        this.playerPos =  playerSnake.snakeBody["0"].position;
+    } else if (targetSquare.hasPlayer()) {
+        alert("Game over!");
+        this.remove();
     } else if(targetSquare.isEmpty()){
-        playerSquare.moveContent(targetSquare);
-        this.playerPos = targetPos;
+        //move head
+        var headSquare = this.getSquare(this.playerPos);
+        headSquare.moveContent(targetSquare);
+        for (var i = 1; i < playerSnake.length(); i++){
+            var snakeSquare = this.getSquare(playerSnake.snakeBody[i].position);
+            var snakeDirection = playerSnake.snakeBody[i].position.add(playerSnake.snakeBody[i].direction);
+            var targetSnakeSquare = this.getSquare(snakeDirection);
+            snakeSquare.moveContent(targetSnakeSquare);
+        }
+        playerSnake.move(direction);
+        this.playerPos =  playerSnake.snakeBody["0"].position;
     }
 };

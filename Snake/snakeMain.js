@@ -8,26 +8,26 @@
 
 "use strict";
 var snakeDefault = [
-    {field: ["@                   ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "              0     ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    ",
-             "                    "]}];
+    {field: ["********************",
+             "*@@@               *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*             0    *",
+              "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "*                  *",
+             "********************"]}];
 
 // game logic
 var SnakeGame = {
@@ -44,7 +44,6 @@ var SnakeGame = {
             dom("DIV", null, newGame, " ", reset));
         place.appendChild(this.container);
         addHandler(document, "keydown", method(this, "keyDown"));
-      //  this.newGame();
     },
     newGame: function() {
         this.level = 0;
@@ -56,7 +55,6 @@ var SnakeGame = {
         }
         this.field = GameField.create(snakeDefault[this.level]);
         this.field.place(this.container);
-        this.field.move(new Point(1, 0));
    },
     keyDown: function(event) {
         if (arrowKeyCodes.contains(event.keyCode)) {
@@ -69,8 +67,4 @@ var SnakeGame = {
 
 window.onload = function () {
     var snakeGame = SnakeGame.create(document.body);
-   // var testSquare2 = GameField.create(snakeDefault[0], document.body);
-//    var testSquare = Square.create("@", dom("TD"));
-//    var testSquare = Square.create("@", dom("TD"));
-    //show(testSquare.hasPlayer());
 };

@@ -15,6 +15,8 @@ var Square = {
             this.content = "food";
         } else if (character === "@")   {
             this.content = "player";
+        } else if (character === "*")   {
+            this.content = "wall";
         }
 
         if (this.content !== null) {
@@ -30,13 +32,15 @@ var Square = {
     hasFood: function() {
         return this.content == "food";
     },
+    hasWall: function() {
+        return this.content == "wall";
+    },
     isEmpty: function() {
         return this.content == null && this.background == "empty";
     },
     clear: function(){
         this.content = null;
         this.background = "empty";
-        console.log("empty");
     }
 
 };
@@ -47,9 +51,10 @@ Square.moveContent = function(target) {
     target.tableCell.appendChild(this.tableCell.lastChild);
 };
 
-Square.cloneContent = function(target) {
-    target.content = this.content;
-    target.tableCell.appendChild(this.tableCell.lastChild);
+Square.copyContent = function(target) {
+    var image = dom("IMG", {src: "img/player.gif"});
+    target.content = "player";
+    target.tableCell.appendChild(image);
 };
 
 Square.clearContent = function() {
@@ -61,7 +66,6 @@ Square.clearContent = function() {
         size -= 10;
         image.style.width = size + "%";
         image.style.height = size + "%";
-        // console.log(size);
         if (size < 30) {
             clearInterval(animate);
             removeElement(image);
